@@ -6,6 +6,7 @@ typedef struct commentThread *CommentThread;
 CommentThread newCommentThread();
 void freeCommentThread(CommentThread c);
 
+
 void setID(CommentThread c,char* s);
 void setUser(CommentThread c,char* s);
 void setDate(CommentThread c,char* s);
@@ -15,8 +16,11 @@ void addLikes(CommentThread c,int l);
 void setHasReplaiesTRUE(CommentThread c);
 void addNumberOfReplies(CommentThread c,int r);
 void addReplieToList(CommentThread c,CommentThread r);
-void printamerdas(CommentThread c);
-
+void formatToJSON(CommentThread c);
+CommentThread addnewComment(CommentThread head);
+int getNumberOfReplies(CommentThread c);
+CommentThread getReply(CommentThread c,int p);
+CommentThread getCurrentReply(CommentThread c);
 
 
 #endif

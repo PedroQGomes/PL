@@ -32,6 +32,7 @@ CommentThread newCommentThread(){
     ct->likes = 0;
     ct->hasReplies = FALSE;
     ct->numberOfReplies = 0; 
+
     return ct;
 }
 
@@ -104,7 +105,7 @@ void addReplieToList(CommentThread c,CommentThread r){
     //indefinido
 }
 
-void printamerdas(CommentThread c){
+void formatToJSON(CommentThread c){
     char *cat;
     cat = g_string_free(c->id, FALSE);
     g_print("ID : %s\n", cat);
@@ -120,9 +121,49 @@ void printamerdas(CommentThread c){
     
     cat = g_string_free(c->comentTxt, FALSE);
     g_print("TEXT : %s\n", cat);
-    
+    printf("\n");
     g_free(cat);
     
 
 
 }
+
+CommentThread addnewComment(CommentThread head){
+    head->hasReplies = TRUE;
+    head->replies[head->numberOfReplies] = newCommentThread();
+    CommentThread curr = head->replies[head->numberOfReplies];
+    head->numberOfReplies++;
+
+    return curr;
+
+}
+
+
+
+int getNumberOfReplies(CommentThread c){
+    return c->numberOfReplies;
+
+
+}
+
+CommentThread getReply(CommentThread c,int p){
+    return c->replies[p];
+
+
+}
+
+CommentThread getCurrentReply(CommentThread c){
+    int tmp = c->numberOfReplies - 1 ;
+    return c->replies[tmp];
+
+}
+
+
+
+
+
+
+
+
+
+
