@@ -1,1 +1,2 @@
-# PLTP1
+make
+./filtro < ficheiro
