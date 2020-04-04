@@ -13,7 +13,7 @@ typedef struct commentThread {
     GString * date;
     GString * timestamp; 
     GString * comentTxt; 
-    int likes; 
+    GString * likes; 
     int hasReplies;
     int numberOfReplies;
     CommentThread replies[]; 
@@ -29,7 +29,7 @@ CommentThread newCommentThread(){
     ct->date = g_string_new("");
     ct->timestamp = g_string_new(""); 
     ct->comentTxt = g_string_new("");
-    ct->likes = 0;
+    ct->likes = g_string_new("");
     ct->hasReplies = FALSE;
     ct->numberOfReplies = 0; 
     //ct->replies
@@ -44,7 +44,7 @@ void freeCommentThread(CommentThread c){
     g_string_free(c->date,TRUE);
     g_string_free(c->timestamp,TRUE);
     g_string_free(c->comentTxt,TRUE);
-    c->likes = 0;
+    g_string_free(c->likes,TRUE);
     c->hasReplies = FALSE;
     c->numberOfReplies = 0;
     //g_list_free(c->replies);
@@ -81,8 +81,9 @@ void addCommentTxt(CommentThread c,char* s){
 }
 
 
-void addLikes(CommentThread c,int l){
-    c->likes += l;
+void addLikes(CommentThread c,char * l){
+    printf("LIKE: %s\n",l);
+    g_string_append(c->likes,l);
 }
 
 void setHasReplaiesTRUE(CommentThread c){
