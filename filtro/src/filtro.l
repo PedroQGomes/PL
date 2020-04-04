@@ -21,7 +21,11 @@ CommentThread giveThread(){
 acentos \xc3[\x80-\xbf]       
 letra [a-zA-Z]|{acentos} 
 pL               [a-z]|ç|ã|á|à|â|é|
+<<<<<<< HEAD
 %x ID USER TIMESTAMP TEXT REPLY LIKE
+=======
+%x ID USER TIMESTAMP TEXT REPLY RTEXT LIKE
+>>>>>>> 26153cb6a34896ab1e5a8457f40fe7cc40ca11e9
 
 %%
 
@@ -49,6 +53,13 @@ pL               [a-z]|ç|ã|á|à|â|é|
 <USER>.                                                 {setUser(curr,yytext);}
 
 
+<<<<<<< HEAD
+=======
+\<(span)[' '](class)\=\"(comment__reputation)[' '](.*)\"[' '](title)\=\"             {BEGIN LIKE;}
+<LIKE>\"\>                                                                           {BEGIN INITIAL;}                                                                                               
+<LIKE>.                                                                              {addLikes(curr,yytext);}
+
+>>>>>>> 26153cb6a34896ab1e5a8457f40fe7cc40ca11e9
 
 \<(time)[' '](class)\=\"                            {BEGIN TIMESTAMP;}
 <TIMESTAMP>\<\/time\>                               {BEGIN INITIAL;}

@@ -44,7 +44,11 @@ void freeCommentThread(CommentThread c){
     g_string_free(c->date,TRUE);
     g_string_free(c->timestamp,TRUE);
     g_string_free(c->comentTxt,TRUE);
+<<<<<<< HEAD
     
+=======
+    g_string_free(c->likes,TRUE);
+>>>>>>> 26153cb6a34896ab1e5a8457f40fe7cc40ca11e9
     c->hasReplies = FALSE;
     c->numberOfReplies = 0;
     //g_list_free(c->replies);
@@ -80,8 +84,14 @@ void addCommentTxt(CommentThread c,char* s){
 }
 
 
+<<<<<<< HEAD
 void addLikes(CommentThread c,char* s){
     //g_string_append(c->likes,s);
+=======
+void addLikes(CommentThread c,char * l){
+    printf("LIKE: %s\n",l);
+    g_string_append(c->likes,l);
+>>>>>>> 26153cb6a34896ab1e5a8457f40fe7cc40ca11e9
 }
 
 void setHasReplaiesTRUE(CommentThread c){
