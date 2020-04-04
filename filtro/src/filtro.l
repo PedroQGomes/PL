@@ -21,7 +21,7 @@ CommentThread giveThread(){
 acentos \xc3[\x80-\xbf]       
 letra [a-zA-Z]|{acentos} 
 pL               [a-z]|ç|ã|á|à|â|é|
-%x ID USER TIMESTAMP TEXT REPLY RTEXT
+%x ID USER TIMESTAMP TEXT REPLY LIKE
 
 %%
 
@@ -49,12 +49,17 @@ pL               [a-z]|ç|ã|á|à|â|é|
 <USER>.                                                 {setUser(curr,yytext);}
 
 
+
 \<(time)[' '](class)\=\"                            {BEGIN TIMESTAMP;}
 <TIMESTAMP>\<\/time\>                               {BEGIN INITIAL;}
 <TIMESTAMP>[0-9]{2}\:[0-9]{2}\:[0-9]{2}\.[0-9]+     {;}  
 <TIMESTAMP>[0-9]{2}\.[0-9]{2}\.[0-9]{4}             {setDate(curr,yytext);} 
 <TIMESTAMP>[0-9]{2}\:[0-9]{2}                       {setTimeStamp(curr,yytext);}
 <TIMESTAMP>.|\n                                     {;}
+
+\<(span)[' '](class)\=\"(comment__reputation)[' '](.*)\"[' '](title)\=\"             {BEGIN LIKE;}
+<LIKE>\"\>                                                                           {BEGIN INITIAL;}                                                                                               
+<LIKE>.                                                                              {addLikes(curr,yytext);}
 
 
 \<(div)[' '](class)\=\"(comment__content)\"\>  {BEGIN TEXT;}
