@@ -30,7 +30,7 @@ pL               [a-z]|ç|ã|á|à|â|é|
 \<\/ol\>                                                                        {isreply = 0;curr = getCurrentReply(head);}
 
 
-\<(li)[' '](class)\=\"(comment)\"       {printf("id %d\n",isreply);curr = addnewComment(giveThread());BEGIN ID;}
+\<(li)[' '](class)\=\"(comment)\"       {curr = addnewComment(giveThread());BEGIN ID;}
 <ID>\>                                  {BEGIN INITIAL;}
 <ID>[' ']                               {;}
 <ID>\"                                  {;}
@@ -49,11 +49,12 @@ pL               [a-z]|ç|ã|á|à|â|é|
 <USER>.                                                 {setUser(curr,yytext);}
 
 
-\<(time)[' '](class)                    {BEGIN TIMESTAMP;}
-<TIMESTAMP>\<\/time\>                   {BEGIN INITIAL;}
-<TIMESTAMP>[0-9]{2}\.[0-9]{2}\.[0-9]{4} {setDate(curr,yytext);} 
-<TIMESTAMP>[0-9]{2}\:[0-9]{2}           {setTimeStamp(curr,yytext);}
-<TIMESTAMP>.|\n                         {;}
+\<(time)[' '](class)\=\"                            {BEGIN TIMESTAMP;}
+<TIMESTAMP>\<\/time\>                               {BEGIN INITIAL;}
+<TIMESTAMP>[0-9]{2}\:[0-9]{2}\:[0-9]{2}\.[0-9]+     {;}  
+<TIMESTAMP>[0-9]{2}\.[0-9]{2}\.[0-9]{4}             {setDate(curr,yytext);} 
+<TIMESTAMP>[0-9]{2}\:[0-9]{2}                       {setTimeStamp(curr,yytext);}
+<TIMESTAMP>.|\n                                     {;}
 
 
 \<(div)[' '](class)\=\"(comment__content)\"\>  {BEGIN TEXT;}
@@ -85,11 +86,13 @@ printf("%d\n",getNumberOfReplies(head));
 
 
 // para ver comentarios, neste caso o primeiro, up to 50
-formatToJSON(getReply(head,30));
+formatToJSON(getReply(head,40));
+
+
 
 // para ver replys a comentarios, neste caso a primeira reply do 7 comentario 
 // NEEDS WORK
-//formatToJSON(getReply(getReply(head,12),2));  
+formatToJSON(getReply(getReply(head,12),2));  
 
 
 

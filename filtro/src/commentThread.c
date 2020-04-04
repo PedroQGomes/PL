@@ -111,7 +111,7 @@ void formatToJSON(CommentThread c){
     g_print("DATA : %s\n", cat);
     
     cat = g_string_free(c->timestamp, FALSE);
-    g_print("DATA : %s\n", cat);
+    g_print("HORA : %s\n", cat);
     
     cat = g_string_free(c->comentTxt, FALSE);
     g_print("TEXT : %s\n", cat);
@@ -124,7 +124,6 @@ void formatToJSON(CommentThread c){
 
 CommentThread addnewComment(CommentThread head){
     head->hasReplies = TRUE;
-    printf("%d\n",head->numberOfReplies);
     head->replies[head->numberOfReplies] = newCommentThread();
     CommentThread curr = head->replies[head->numberOfReplies];
 
