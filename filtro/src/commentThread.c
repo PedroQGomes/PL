@@ -11,7 +11,7 @@ typedef struct commentThread {
     GString * id;
     GString * user;
     GString * date;
-    float timestamp; 
+    GString * timestamp; 
     GString * comentTxt; 
     int likes; 
     int hasReplies;
@@ -27,12 +27,12 @@ CommentThread newCommentThread(){
     ct->id = g_string_new("");
     ct->user = g_string_new("");
     ct->date = g_string_new("");
-    ct->timestamp = 0.0; 
+    ct->timestamp = g_string_new(""); 
     ct->comentTxt = g_string_new("");
     ct->likes = 0;
     ct->hasReplies = FALSE;
     ct->numberOfReplies = 0; 
-
+    //ct->replies
     return ct;
 }
 
@@ -42,7 +42,7 @@ void freeCommentThread(CommentThread c){
     g_string_free(c->id,TRUE);
     g_string_free(c->user,TRUE);
     g_string_free(c->date,TRUE);
-    c->timestamp = 0.0;
+    g_string_free(c->timestamp,TRUE);
     g_string_free(c->comentTxt,TRUE);
     c->likes = 0;
     c->hasReplies = FALSE;
@@ -72,14 +72,7 @@ void setDate(CommentThread c,char* s){
 }
 
 void setTimeStamp(CommentThread c,char* t){
-    /*
-    float f = 0.0;
-    f += atof(t[0])*10;
-    f += atof(t[1]);
-    f += atof(t[3])/10;
-    f += atof(t[4]/100);
-    c->timestamp = f;
-    */
+    g_string_append(c->timestamp,t);
 }
 
 void addCommentTxt(CommentThread c,char* s){
@@ -117,7 +110,8 @@ void formatToJSON(CommentThread c){
     cat = g_string_free(c->date, FALSE);
     g_print("DATA : %s\n", cat);
     
-    g_print("HORAS : %9.6f\n", c->timestamp);
+    cat = g_string_free(c->timestamp, FALSE);
+    g_print("DATA : %s\n", cat);
     
     cat = g_string_free(c->comentTxt, FALSE);
     g_print("TEXT : %s\n", cat);
@@ -130,8 +124,10 @@ void formatToJSON(CommentThread c){
 
 CommentThread addnewComment(CommentThread head){
     head->hasReplies = TRUE;
+    printf("%d\n",head->numberOfReplies);
     head->replies[head->numberOfReplies] = newCommentThread();
     CommentThread curr = head->replies[head->numberOfReplies];
+
     head->numberOfReplies++;
 
     return curr;

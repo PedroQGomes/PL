@@ -6,20 +6,31 @@
  
 CommentThread head;
 CommentThread curr;
+int isreply = 0;
 
+CommentThread giveThread(){
+    if(isreply == 0){
+        return head;
+    }else{
+        return curr;
+    }
+
+}
 
 %}
 acentos \xc3[\x80-\xbf]       
 letra [a-zA-Z]|{acentos} 
 pL               [a-z]|ç|ã|á|à|â|é|
-%x ID USER TIMESTAMP TEXT REPLY
+%x ID USER TIMESTAMP TEXT REPLY RTEXT
 
 %%
 
-\<(ol)[' '](class)\=\"(comments__list)\"[' '](id)\=\"(approved)\-(comments)\"\> {head = newCommentThread();}                                           
+\<(ol)[' '](class)\=\"(comments__list)\"[' '](id)\=\"(approved)\-(comments)\"\> {head = newCommentThread();} 
+\<(ol)[' '](class)\=\"(comments__list)\"\>                                      {isreply = 1;}                                          
+\<\/ol\>                                                                        {isreply = 0;curr = getCurrentReply(head);}
 
 
-\<(li)[' '](class)\=\"(comment)\"       {curr = addnewComment(head);BEGIN ID;}
+\<(li)[' '](class)\=\"(comment)\"       {printf("id %d\n",isreply);curr = addnewComment(giveThread());BEGIN ID;}
 <ID>\>                                  {BEGIN INITIAL;}
 <ID>[' ']                               {;}
 <ID>\"                                  {;}
@@ -32,6 +43,7 @@ pL               [a-z]|ç|ã|á|à|â|é|
 \<(h5)[' '](class)\=\"(comment__author)\"\>             {BEGIN USER;}
 <USER>\<\/h5\>                                          {BEGIN INITIAL;} 
 <USER>\n                                                {;}
+<USER>[' '][' '][' ']+                                  {;}
 <USER>\<(a)[' '](href)\=\"(.*)\"[' '](rel)\=\"(.*)\"\>  {;}
 <USER>\<\/a\>                                           {;}
 <USER>.                                                 {setUser(curr,yytext);}
@@ -45,20 +57,14 @@ pL               [a-z]|ç|ã|á|à|â|é|
 
 
 \<(div)[' '](class)\=\"(comment__content)\"\>  {BEGIN TEXT;}
-<TEXT>\<\/p\>                                  {BEGIN INITIAL;}
+<TEXT>\<\/p\>                                  {curr = getCurrentReply(head);BEGIN INITIAL;}
 <TEXT>\<p\>                                    {;}
 <TEXT>\n                                       {;} 
 <TEXT>[' '][' '][' ']+                         {;}
 <TEXT>.                                        {addCommentTxt(curr,yytext);}
 
 
-\<(ol)[' '](class)\=\"(comments__list)\"\>              {curr = addnewComment(curr);BEGIN REPLY;}
-<REPLY>\<\/ol\>                                         {curr = getCurrentReply(head);BEGIN INITIAL;}
-<REPLY>\<(li)[' '](class)\=\"(comment)\"                {BEGIN ID;BEGIN REPLY;}
-<REPLY>\<(h5)[' '](class)\=\"(comment__author)\"\>      {BEGIN USER;BEGIN REPLY;}
-<REPLY>\<(time)[' '](class)                             {BEGIN TIMESTAMP;BEGIN REPLY;}
-<REPLY>\<(div)[' '](class)\=\"(comment__content)\"\>    {BEGIN TEXT;BEGIN REPLY;}
-<REPLY>.|\n                                             {;}
+
 
 
 .|\n  { ; }
@@ -79,11 +85,11 @@ printf("%d\n",getNumberOfReplies(head));
 
 
 // para ver comentarios, neste caso o primeiro, up to 50
-formatToJSON(getReply(head,0));
+formatToJSON(getReply(head,30));
 
 // para ver replys a comentarios, neste caso a primeira reply do 7 comentario 
 // NEEDS WORK
-//formatToJSON(getReply(getReply(head,6),0));  
+//formatToJSON(getReply(getReply(head,12),2));  
 
 
 
