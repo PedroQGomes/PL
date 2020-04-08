@@ -21,11 +21,7 @@ CommentThread giveThread(){
 acentos \xc3[\x80-\xbf]       
 letra [a-zA-Z]|{acentos} 
 pL               [a-z]|ç|ã|á|à|â|é|
-<<<<<<< HEAD
-%x ID USER TIMESTAMP TEXT REPLY LIKE
-=======
-%x ID USER TIMESTAMP TEXT REPLY RTEXT LIKE
->>>>>>> 26153cb6a34896ab1e5a8457f40fe7cc40ca11e9
+%x ID USER TIMESTAMP TEXT  
 
 %%
 
@@ -53,14 +49,6 @@ pL               [a-z]|ç|ã|á|à|â|é|
 <USER>.                                                 {setUser(curr,yytext);}
 
 
-<<<<<<< HEAD
-=======
-\<(span)[' '](class)\=\"(comment__reputation)[' '](.*)\"[' '](title)\=\"             {BEGIN LIKE;}
-<LIKE>\"\>                                                                           {BEGIN INITIAL;}                                                                                               
-<LIKE>.                                                                              {addLikes(curr,yytext);}
-
->>>>>>> 26153cb6a34896ab1e5a8457f40fe7cc40ca11e9
-
 \<(time)[' '](class)\=\"                            {BEGIN TIMESTAMP;}
 <TIMESTAMP>\<\/time\>                               {BEGIN INITIAL;}
 <TIMESTAMP>[0-9]{2}\:[0-9]{2}\:[0-9]{2}\.[0-9]+     {;}  
@@ -68,17 +56,15 @@ pL               [a-z]|ç|ã|á|à|â|é|
 <TIMESTAMP>[0-9]{2}\:[0-9]{2}                       {setTimeStamp(curr,yytext);}
 <TIMESTAMP>.|\n                                     {;}
 
-\<(span)[' '](class)\=\"(comment__reputation)[' '](.*)\"[' '](title)\=\"             {BEGIN LIKE;}
-<LIKE>\"\>                                                                           {BEGIN INITIAL;}                                                                                               
-<LIKE>.                                                                              {addLikes(curr,yytext);}
 
 
-\<(div)[' '](class)\=\"(comment__content)\"\>  {BEGIN TEXT;}
-<TEXT>\<\/p\>                                  {curr = getCurrentReply(head);BEGIN INITIAL;}
-<TEXT>\<p\>                                    {;}
-<TEXT>\n                                       {;} 
-<TEXT>[' '][' '][' ']+                         {;}
-<TEXT>.                                        {addCommentTxt(curr,yytext);}
+\<(div)[' '](class)\=\"(comment__content)\"\>   {BEGIN TEXT;}
+<TEXT>\<\/p\>                                   {curr = getCurrentReply(head);BEGIN INITIAL;}
+<TEXT>\<p\>                                     {;}
+<TEXT>\n                                        {;} 
+<TEXT>\"                                        {;} 
+<TEXT>[' '][' '][' ']+                          {;}
+<TEXT>.                                         {addCommentTxt(curr,yytext);}
 
 
 
@@ -98,19 +84,10 @@ int main()
 
 yylex();
 
-printf("%d\n",getNumberOfReplies(head));
 
+openFile("output.json");
 
-// para ver comentarios, neste caso o primeiro, up to 50
-formatToJSON(getReply(head,40));
-
-
-
-// para ver replys a comentarios, neste caso a primeira reply do 7 comentario 
-// NEEDS WORK
-formatToJSON(getReply(getReply(head,12),2));  
-
-
+formatToJsonHead(head);
 
 
  return 0; 

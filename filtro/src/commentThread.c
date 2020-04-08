@@ -1,8 +1,10 @@
 #include <glib.h>
 #include <stdio.h>
+#include <string.h>
 #include <commentThread.h>
 
-
+#define REPLYSPACE 10
+#define COMMENTSPACE 5
 
 
 
@@ -13,14 +15,13 @@ typedef struct commentThread {
     GString * date;
     GString * timestamp; 
     GString * comentTxt; 
-    GString * likes; 
     int hasReplies;
     int numberOfReplies;
     CommentThread replies[]; 
 }*CommentThread;
 
 
-
+FILE* fp;
 
 CommentThread newCommentThread(){
     CommentThread ct = malloc(sizeof(struct commentThread));
@@ -29,7 +30,6 @@ CommentThread newCommentThread(){
     ct->date = g_string_new("");
     ct->timestamp = g_string_new(""); 
     ct->comentTxt = g_string_new("");
-    ct->likes = g_string_new("");
     ct->hasReplies = FALSE;
     ct->numberOfReplies = 0; 
     //ct->replies
@@ -44,11 +44,6 @@ void freeCommentThread(CommentThread c){
     g_string_free(c->date,TRUE);
     g_string_free(c->timestamp,TRUE);
     g_string_free(c->comentTxt,TRUE);
-<<<<<<< HEAD
-    
-=======
-    g_string_free(c->likes,TRUE);
->>>>>>> 26153cb6a34896ab1e5a8457f40fe7cc40ca11e9
     c->hasReplies = FALSE;
     c->numberOfReplies = 0;
     //g_list_free(c->replies);
@@ -64,7 +59,7 @@ void setID(CommentThread c,char* s){
 }
 
 void setUser(CommentThread c,char* s){
-    //printf("QND ADICIONA %s\n",s);
+    
     g_string_append(c->user,s);
 
 
@@ -84,15 +79,6 @@ void addCommentTxt(CommentThread c,char* s){
 }
 
 
-<<<<<<< HEAD
-void addLikes(CommentThread c,char* s){
-    //g_string_append(c->likes,s);
-=======
-void addLikes(CommentThread c,char * l){
-    printf("LIKE: %s\n",l);
-    g_string_append(c->likes,l);
->>>>>>> 26153cb6a34896ab1e5a8457f40fe7cc40ca11e9
-}
 
 void setHasReplaiesTRUE(CommentThread c){
     c->hasReplies = TRUE;
@@ -103,33 +89,137 @@ void addNumberOfReplies(CommentThread c,int r){
 }
 
 
-void addReplieToList(CommentThread c,CommentThread r){
-    //indefinido
+void openFile(char * f){
+    fp = fopen(f,"w+");
 }
+
+
+void formatToJsonHead(CommentThread c){
+    fputs("\"commentThread\" : [\n",fp);
+    for(int i = 0; i < c->numberOfReplies;i++){
+        fputs("{\n",fp);
+        formatToJSON(c->replies[i]);
+        if(i < c->numberOfReplies-1)
+        fputs("},\n",fp);
+        else 
+        fputs("}\n",fp);
+    }
+    fputs("]\n",fp);
+
+}
+
+GString* addSpacesToString(int spaces, GString* str ) {
+    for(int i=0; i < spaces; i++)
+    g_string_prepend_c(str,' ');
+}
+
+
 
 void formatToJSON(CommentThread c){
     char *cat;
+
     cat = g_string_free(c->id, FALSE);
-    g_print("ID : %s\n", cat);
+    fputs("     \"id\" : \"",fp);
+    fputs(cat,fp);
+    fputs("\"\n",fp);
     
     cat = g_string_free(c->user, FALSE);
-    g_print("USERNAME : %s\n", cat);
+    fputs("     \"user\" : \"",fp);
+    fputs(cat,fp);
+    fputs("\"\n",fp);
 
-    
     cat = g_string_free(c->date, FALSE);
-    g_print("DATA : %s\n", cat);
-    
+    fputs("     \"data\" : \"",fp);
+    fputs(cat,fp);
+    fputs("\"\n",fp);
+
     cat = g_string_free(c->timestamp, FALSE);
-    g_print("HORA : %s\n", cat);
-    
+    fputs("     \"hora\" : \"",fp);
+    fputs(cat,fp);
+    fputs("\"\n",fp);
+
     cat = g_string_free(c->comentTxt, FALSE);
-    g_print("TEXT : %s\n", cat);
-    printf("\n");
-    g_free(cat);
+    fputs("     \"comment\" : \"",fp);
+    fputs(cat,fp);
+    fputs("\"\n",fp);
+
+
+    fputs("     \"Nº respostas\" : \"",fp);
+    fprintf(fp,"%d",c->numberOfReplies);
+    fputs("\"\n",fp);
+
+
+    fputs("     \"reply\" : [ ",fp);
+    for(int i = 0; i < c->numberOfReplies;i++){
+        fputs("\n",fp);
+        fputs("             {\n",fp);
+        ReplyToJSON(c->replies[i]);
+        if(i < c->numberOfReplies-1)
+        fputs("             },",fp);
+        else 
+        fputs("             }\n",fp);
+    }
+    fputs("     ] \n",fp);
+    fputs("\n",fp);
+    fputs("\n",fp);
+}
+
+void ReplyToJSON(CommentThread c){
+    char *cat;
+
+    cat = g_string_free(c->id, FALSE);
+    fputs("             \"id\" : \"",fp);
+    fputs(cat,fp);
+    fputs("\"\n",fp);
     
+    cat = g_string_free(c->user, FALSE);
+    fputs("             \"user\" : \"",fp);
+    fputs(cat,fp);
+    fputs("\"\n",fp);
+
+    cat = g_string_free(c->date, FALSE);
+    fputs("             \"data\" : \"",fp);
+    fputs(cat,fp);
+    fputs("\"\n",fp);
+
+    cat = g_string_free(c->timestamp, FALSE);
+    fputs("             \"hora\" : \"",fp);
+    fputs(cat,fp);
+    fputs("\"\n",fp);
+
+    cat = g_string_free(c->comentTxt, FALSE);
+    fputs("             \"comment\" : \"",fp);
+    fputs(cat,fp);
+    fputs("\"\n",fp);
+
+
+
+
+    fputs("             \"Nº respostas\" : \"",fp);
+    fprintf(fp,"%d",c->numberOfReplies);
+    fputs("\"\n",fp);
+
+    fputs("             \"reply\" : [ ",fp);
+    for(int i = 0; i < c->numberOfReplies;i++){
+        fputs("\n",fp);
+        fputs("             {\n",fp);
+        ReplyToJSON(c->replies[i]);
+        if(i < c->numberOfReplies-1)
+        fputs("             },",fp);
+        else 
+        fputs("             }\n",fp);
+    }
+    fputs("     ] \n",fp);
+    fputs("\n",fp);
+    fputs("\n",fp);
+
 
 
 }
+
+
+
+
 
 CommentThread addnewComment(CommentThread head){
     head->hasReplies = TRUE;
