@@ -5,7 +5,7 @@
 O primeiro trabalho pratico consiste na elaboração de um projeto usando o FLEX que converte ficheiros HTML para o formato JSON.
 
 
-### Dependencias
+### Dependências
 
 Para este trabalho foi usada a biblioteca glib e a ferramenta Flex
 
@@ -20,7 +20,7 @@ sudo apt-get install flex
 
 
 
-### Instalação e testes
+### Compilação e Testes
 
 Para compilar 
 
@@ -43,7 +43,7 @@ make clean
 
 O segundo trabalho pratico consiste na elaboração de uma gramática concreta para o formato TOML tendo como resultado a conversão para o formato JSON.
 
-### Dependencias
+### Dependências
 
 Para este trabalho foi usada a biblioteca glib e as ferramentas Flex e Yacc
 
@@ -63,7 +63,7 @@ sudo apt-get install bison -y
 sudo apt-get install byacc -y
 ```
 
-### Instalação e testes
+### Compilação e Testes
 
 Para compilar 
 
